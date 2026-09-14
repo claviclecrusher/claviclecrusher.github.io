@@ -1,0 +1,37 @@
+# 청첩장 페이지(/wedding/)는 각 HTML 의
+#   <meta name="robots" content="noindex, nofollow">
+# 로 검색 노출을 막습니다.
+#
+# 여기서 Disallow 로 크롤링까지 막으면 크롤러가 그 noindex 태그를
+# 읽지 못해, 오히려 URL 만 검색 결과에 남을 수 있습니다.
+# 그래서 일반 검색엔진은 크롤링을 허용하고 noindex 로 처리합니다.
+User-agent: *
+Allow: /
+
+# AI 학습 · 대량 수집 봇은 크롤링 자체를 차단
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
