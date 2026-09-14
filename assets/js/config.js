@@ -10,7 +10,7 @@ const CONFIG = {
   meta: {
     title: '김민준 ♥ 이서연 결혼합니다',          // 브라우저 탭 / 카톡 공유 제목
     description: '2026년 11월 7일 토요일 낮 12시\n그랜드홀 3층 그랜드볼룸',
-    url: 'https://example.com/wedding',           // 배포 후 실제 주소로 변경
+    url: 'https://claviclecrusher.github.io/',    // 공유하기 버튼이 복사하는 주소
   },
 
   /* ── 2. 신랑 · 신부 ─────────────────────────────────────────────── */
