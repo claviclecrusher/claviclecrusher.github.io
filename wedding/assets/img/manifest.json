@@ -1,0 +1,12 @@
+{
+    "generatedAt":  "2026-09-14 18:15:18",
+    "cover":  "assets/img/cover.svg",
+    "gallery":  [
+                    "assets/img/gallery/1.svg",
+                    "assets/img/gallery/2.svg",
+                    "assets/img/gallery/3.svg",
+                    "assets/img/gallery/4.svg",
+                    "assets/img/gallery/5.svg",
+                    "assets/img/gallery/6.svg"
+                ]
+}

@@ -14,13 +14,17 @@ GitHub Pages 개인 사이트 저장소.
 ├── robots.txt              AI 수집 봇 차단
 ├── .nojekyll               Jekyll 처리 건너뛰기
 ├── dev-server.ps1          로컬 미리보기 서버
+├── update-photos.ps1       사진 목록 갱신 스크립트
 └── wedding/                ← 청첩장
     ├── index.html          뼈대 (건드릴 일 거의 없음)
     └── assets/
         ├── css/style.css   디자인 (색·폰트는 맨 위 :root 변수)
         ├── js/config.js    ★ 모든 내용이 여기에 있습니다
         ├── js/main.js      화면을 그리는 로직
-        └── img/            사진 (지금은 임시 SVG)
+        └── img/
+            ├── cover.svg       표지
+            ├── gallery/        ★ 사진첩 (여기에 넣으면 자동 인식)
+            └── manifest.json   사진 목록 (스크립트가 만듭니다)
 ```
 
 ---
@@ -178,21 +182,70 @@ guestGate: {
 
 # 사진 교체
 
-`wedding/assets/img/` 에 실제 사진을 넣고, `config.js` 의 경로를 바꿉니다.
+**`config.js` 를 건드릴 필요 없습니다.** 폴더에 넣고 명령 한 번이면 됩니다.
 
-```js
-coverImage: 'assets/img/cover.jpg',
-gallery: [
-  'assets/img/gallery-1.jpg',
-  'assets/img/gallery-2.jpg',
-],
+## 1. 사진을 폴더에 넣습니다
+
+```
+wedding/assets/img/
+├── cover.jpg          ← 표지 (파일명이 'cover' 로 시작하면 됨)
+└── gallery/           ← 이 폴더 안의 사진 전부가 사진첩에 들어갑니다
+    ├── 01.jpg
+    ├── 02.jpg
+    └── ...
 ```
 
-- 경로는 `assets/img/` 로 시작합니다 (`wedding/` 은 붙이지 않습니다)
+기존 임시 SVG(`gallery/1.svg` ~ `6.svg`, `cover.svg`)는 지우시면 됩니다.
+
+## 2. 목록을 갱신합니다
+
+```
+powershell -NoProfile -ExecutionPolicy Bypass -File update-photos.ps1
+```
+
+폴더를 훑어서 `manifest.json` 을 다시 만듭니다. 실행하면 이렇게 나옵니다:
+
+```
+표지  : cover.jpg  (248KB)
+  + 01.jpg  (180KB)
+  + 02.jpg  (620KB)  ← 용량이 큽니다. 300KB 이하 권장
+  ! 사진.heic 는 브라우저가 열지 못해 건너뜁니다. jpg 로 변환해 주세요.
+
+갤러리 2장, 합계 800KB
+```
+
+## 3. 올립니다
+
+```
+git add -A
+git commit -m "사진 교체"
+git push
+```
+
+## 알아두실 것
+
+- **jpg, png, webp, gif, avif, svg** 모두 됩니다. 확장자 대소문자도 상관없습니다.
+- **heic / tiff / raw 는 안 됩니다.** 브라우저가 못 엽니다.
+  아이폰 사진이 heic 로 나오면, 아이폰 설정 → 카메라 → 포맷 → `높은 호환성`
+  으로 바꾸거나 jpg 로 변환해서 넣으세요. 스크립트가 걸러내고 알려줍니다.
+- **순서는 파일 이름순**입니다. `사진2` 가 `사진10` 보다 앞에 옵니다 (숫자로 비교).
+  순서를 정하고 싶으면 `01_`, `02_` 처럼 앞에 번호를 붙이세요.
+- 한글 파일명도 되지만, 문제가 생기면 영문/숫자로 바꿔보세요.
+- **왜 스크립트가 필요한가**: GitHub Pages 는 정적 호스팅이라 브라우저가
+  폴더 안에 무슨 파일이 있는지 알아낼 방법이 없습니다. 그래서 목록을
+  파일로 미리 만들어 둡니다.
+
+## 사진 규격
+
 - 표지: 세로 3:4 비율 권장 (예: 900 × 1200)
 - 갤러리: 정사각형으로 잘리므로 인물이 중앙에 오도록
 - 장당 300KB 이하로 줄여야 모바일에서 빠릅니다 (JPG/WebP)
 - 갯수는 자유입니다. 줄에 맞춰 3의 배수가 보기 좋습니다
+
+## 직접 목록을 정하고 싶다면
+
+`options.autoPhotos` 를 `false` 로 바꾸면 `config.js` 의
+`gallery` / `coverImage` 목록을 그대로 씁니다. 스크립트도 필요 없습니다.
 
 # 색 · 폰트 바꾸기
 

@@ -66,13 +66,35 @@
     $('#ogDesc').content  = C.meta.description.replace(/\n/g, ' ');
     // 카카오톡 등 공유 미리보기는 절대 주소를 요구한다
     if (location.protocol.startsWith('http')) {
-      $('#ogImage').content = new URL(C.coverImage, location.href).href;
+      $('#ogImage').content = new URL(photos.cover, location.href).href;
+    }
+  }
+
+  /* ──────────────────────────────────────────────────────────────
+   *  사진 목록
+   *
+   *  update-photos.ps1 이 만들어 둔 manifest.json 을 먼저 읽는다.
+   *  (정적 호스팅에는 폴더 목록을 조회할 방법이 없어서 목록 파일이 필요하다)
+   *  파일이 없거나 비어 있으면 config.js 에 적힌 목록을 그대로 쓴다.
+   * ────────────────────────────────────────────────────────────── */
+  let photos = { cover: C.coverImage, gallery: C.gallery || [] };
+
+  async function loadPhotoManifest() {
+    if (!C.options.autoPhotos) return;
+    try {
+      const res = await fetch('assets/img/manifest.json', { cache: 'no-cache' });
+      if (!res.ok) return;
+      const m = await res.json();
+      if (m.cover) photos.cover = m.cover;
+      if (Array.isArray(m.gallery) && m.gallery.length) photos.gallery = m.gallery;
+    } catch (e) {
+      // 목록 파일이 없거나 형식이 깨진 경우 — config.js 값으로 진행
     }
   }
 
   function renderCover() {
-    $('#coverImage').src  = C.coverImage;
-    $('#footerImage').src = C.coverImage;
+    $('#coverImage').src  = photos.cover;
+    $('#footerImage').src = photos.cover;
 
     const dateText = `${wy}. ${String(wm).padStart(2, '0')}. ${String(wd).padStart(2, '0')}`;
     $('#coverDate').textContent  = `${dateText}  ${WEEKDAY_KO[weddingDate.getDay()]}`;
@@ -207,12 +229,13 @@
    *  5. 갤러리 · 라이트박스
    * ────────────────────────────────────────────────────────────── */
   function renderGallery() {
-    if (!C.options.showGallery || !C.gallery.length) {
+    const list = photos.gallery;
+    if (!C.options.showGallery || !list.length) {
       $('#gallerySection').remove();
       return;
     }
 
-    $('#gallery').innerHTML = C.gallery.map((src, i) => `
+    $('#gallery').innerHTML = list.map((src, i) => `
       <button class="gallery__item" data-index="${i}" aria-label="사진 ${i + 1} 크게 보기">
         <img src="${src}" alt="웨딩 사진 ${i + 1}" loading="lazy" />
       </button>`).join('');
@@ -223,10 +246,10 @@
     let current    = 0;
 
     const show = (i) => {
-      current = (i + C.gallery.length) % C.gallery.length;
-      image.src = C.gallery[current];
+      current = (i + list.length) % list.length;
+      image.src = list[current];
       image.alt = `웨딩 사진 ${current + 1}`;
-      count.textContent = `${current + 1} / ${C.gallery.length}`;
+      count.textContent = `${current + 1} / ${list.length}`;
     };
 
     const open = (i) => {
@@ -591,17 +614,22 @@
   /* ──────────────────────────────────────────────────────────────
    *  실행
    * ────────────────────────────────────────────────────────────── */
-  renderMeta();
-  renderCover();
-  renderGreeting();
-  initContactSheet();
-  renderCalendar();
-  renderGallery();
-  renderLocation();
-  renderAccounts();
-  initGuestbook();
-  initShare();
-  initBgm();
-  initGate();
-  initReveal();
+  (async function start() {
+    // 사진 목록을 먼저 확보한다. 실패해도 config.js 값으로 계속 진행된다.
+    await loadPhotoManifest();
+
+    renderMeta();
+    renderCover();
+    renderGreeting();
+    initContactSheet();
+    renderCalendar();
+    renderGallery();
+    renderLocation();
+    renderAccounts();
+    initGuestbook();
+    initShare();
+    initBgm();
+    initGate();
+    initReveal();
+  })();
 })();

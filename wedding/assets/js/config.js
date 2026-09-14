@@ -69,14 +69,24 @@ const CONFIG = {
 더없는 기쁨이 되겠습니다.`,
   },
 
-  /* ── 6. 갤러리 ──────────────────────────────────────────────────── */
+  /* ── 6. 갤러리 ──────────────────────────────────────────────────────
+   *
+   *  options.autoPhotos 가 true 면 아래 목록은 쓰이지 않습니다.
+   *  사진을 폴더에 넣고 update-photos.ps1 을 실행하면 알아서 잡힙니다.
+   *
+   *     표지    → wedding/assets/img/cover.jpg   (확장자는 자유)
+   *     갤러리  → wedding/assets/img/gallery/    폴더 안에 전부
+   *
+   *  아래 목록은 autoPhotos 를 false 로 껐을 때(또는 목록 파일이 없을 때)
+   *  쓰이는 예비용입니다. 순서를 직접 정하고 싶을 때 쓰세요.
+   * ──────────────────────────────────────────────────────────────── */
   gallery: [
-    'assets/img/gallery-1.svg',
-    'assets/img/gallery-2.svg',
-    'assets/img/gallery-3.svg',
-    'assets/img/gallery-4.svg',
-    'assets/img/gallery-5.svg',
-    'assets/img/gallery-6.svg',
+    'assets/img/gallery/1.svg',
+    'assets/img/gallery/2.svg',
+    'assets/img/gallery/3.svg',
+    'assets/img/gallery/4.svg',
+    'assets/img/gallery/5.svg',
+    'assets/img/gallery/6.svg',
   ],
   coverImage: 'assets/img/cover.svg',
 
@@ -102,6 +112,7 @@ const CONFIG = {
 
   /* ── 8. 기능 On/Off ─────────────────────────────────────────────── */
   options: {
+    autoPhotos: true,        // 사진 폴더를 자동 인식 (update-photos.ps1 로 목록 갱신)
     showGate: true,          // 이름 확인 후 입장 (아래 9번 명단 사용)
     showCalendar: true,      // 달력 + D-day
     showGallery: true,       // 사진첩
