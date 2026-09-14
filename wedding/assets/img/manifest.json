@@ -1,5 +1,5 @@
 {
-    "generatedAt":  "2026-09-14 18:36:29",
+    "generatedAt":  "2026-09-14 18:38:55",
     "cover":  "assets/img/cover.svg",
     "gallery":  [
                     "assets/img/gallery/FC4167D2-E26E-40B6-AC2C-D47F1A113918.jpg",
@@ -22,7 +22,6 @@
                     "assets/img/gallery/IMG_5606.JPG",
                     "assets/img/gallery/IMG_5703.jpg",
                     "assets/img/gallery/IMG_8714.jpg",
-                    "assets/img/gallery/IMG_8746.JPG",
-                    "assets/img/gallery/IMG_9886.jpg"
+                    "assets/img/gallery/IMG_8746.JPG"
                 ]
 }
