@@ -8,43 +8,43 @@ const CONFIG = {
 
   /* ── 1. 기본 정보 ───────────────────────────────────────────────── */
   meta: {
-    title: '김민준 ♥ 이서연 결혼합니다',          // 브라우저 탭 / 카톡 공유 제목
-    description: '2026년 11월 7일 토요일 낮 12시\n그랜드홀 3층 그랜드볼룸',
+    title: '뿡뿡뿡 ♥ 빵빵빵 결혼합니다',          // 브라우저 탭 / 카톡 공유 제목
+    description: '2027년 11월 7일 토요일 낮 12시\n세종 초려역사공원',
     url: 'https://claviclecrusher.github.io/wedding/',  // 공유하기 버튼이 복사하는 주소
   },
 
   /* ── 2. 신랑 · 신부 ─────────────────────────────────────────────── */
   couple: {
     groom: {
-      name: '김민준',
-      nameEn: 'Minjun',
+      name: '뿡뿡뿡',
+      nameEn: 'BBB',
       phone: '010-1234-5678',
-      relation: '장남',                            // 장남 / 차남 / 아들 ...
-      father: { name: '김대호', phone: '010-1111-2222', deceased: false },
-      mother: { name: '박은영', phone: '010-3333-4444', deceased: false },
+      relation: '아들',                            // 장남 / 차남 / 아들 ...
+      father: { name: '둣둣둣', phone: '010-1111-2222', deceased: false },
+      mother: { name: '닷닷닷', phone: '010-3333-4444', deceased: false },
     },
     bride: {
-      name: '이서연',
-      nameEn: 'Seoyeon',
+      name: '빵빵빵',
+      nameEn: 'BBB',
       phone: '010-8765-4321',
-      relation: '장녀',
-      father: { name: '이정환', phone: '010-5555-6666', deceased: false },
-      mother: { name: '최수미', phone: '010-7777-8888', deceased: false },
+      relation: '딸',
+      father: { name: '디디디', phone: '010-5555-6666', deceased: false },
+      mother: { name: '도도도', phone: '010-7777-8888', deceased: false },
     },
   },
 
   /* ── 3. 예식 일시 ───────────────────────────────────────────────── */
   wedding: {
-    date: '2026-11-07',       // YYYY-MM-DD (달력 · D-day 계산에 사용)
+    date: '2027-11-07',       // YYYY-MM-DD (달력 · D-day 계산에 사용)
     time: '12:00',            // HH:MM (24시간)
     timeText: '토요일 낮 12시',
   },
 
   /* ── 4. 예식장 ──────────────────────────────────────────────────── */
   venue: {
-    name: '그랜드홀 웨딩',
-    hall: '3층 그랜드볼룸',
-    address: '서울특별시 강남구 테헤란로 123',
+    name: '초려역사공원',
+    hall: '초려기념관',
+    address: '세종특별자치시 도움1로 40 (어진동)',
     tel: '02-1234-5678',
     lat: 37.5006,             // 지도 좌표 (선택)
     lng: 127.0364,
