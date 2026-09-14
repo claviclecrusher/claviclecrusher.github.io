@@ -7,3 +7,6 @@ desktop.ini
 
 # 원본 사진 보관용 (용량 큰 파일은 커밋하지 않기)
 assets/img/original/
+
+# 하객 평문 명단 — 절대 커밋하지 않습니다 (해시만 올라갑니다)
+guests.txt

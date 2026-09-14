@@ -1,0 +1,20 @@
+{
+    "generatedAt":  "2026-09-14 18:47:48",
+    "algorithm":  "PBKDF2-SHA256",
+    "iterations":  100000,
+    "salt":  "cb687da99a685b6b31e792834364410b",
+    "hashes":  [
+                   "d4da9ef126c726faa25d23aa4ca5deeb7aa12b42274bf992639cf53168e6db5d",
+                   "c6519a9a4d58040681e3dffa5480f6b12948c22a4a8831cfdbfe5bfd618bda81",
+                   "04bd2253c2a76e5602f8a278e7407d217df62eaa3ba345e14330219a2fbdfb61",
+                   "76cfd7d3dff97dd538fc2c252d5a1818f9ed43702cfb766e6595301aee766ebf",
+                   "f65a5e0b3d48fa5848ed40c7b406fc2994c010a5f2d7a9b89d8bb9598fd17d57",
+                   "296f9bff405ab4fda6c53ee2f048fa8ae62f5fcf111700a2b10842d867722f46",
+                   "084704807a3c942e0ae42d19638ed0e93b30d1905ba9e6349715444380937280",
+                   "b961eace3d0767cbe211fcd9a1351a2a5c6412557ddd11bb2343ef1410103f3b",
+                   "ab41cce2a37b2b30031531175e1c7d7bf444a580052194067565159e4c0529c6",
+                   "4cdabdcdfc387bde1924814aacd550c8e88352c0049ce47197d1b8e66185e061",
+                   "d06e45ce8486f47c44def7e6ffdff2356647127a02a0074af7079f57e5f46625",
+                   "201b1ca4c4e2f49e84b573421ebf986c2143384abb84ad66757d08f541bab556"
+               ]
+}

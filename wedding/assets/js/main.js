@@ -491,15 +491,75 @@
    * ────────────────────────────────────────────────────────────── */
   const GATE_KEY = 'wedding-guest-name';
 
-  /** 띄어쓰기·대소문자 차이를 무시하기 위한 정규화 */
+  /** 띄어쓰기·대소문자 차이를 무시하기 위한 정규화 (update-guests.ps1 과 규칙이 같아야 함) */
   const normalizeName = (s) => String(s || '').replace(/\s+/g, '').toLowerCase();
 
-  /** 입력한 이름이 명단에 있으면 명단에 적힌 원래 표기를 돌려준다 */
-  function findGuest(input) {
+  /* 해시 명단. update-guests.ps1 이 만든 guests.json 을 읽어 담는다. */
+  let guestHashes = null;   // { iterations, salt, hashes: Set }
+
+  async function loadGuestHashes() {
+    try {
+      const res = await fetch('assets/guests.json', { cache: 'no-cache' });
+      if (!res.ok) return;
+      const d = await res.json();
+      if (!Array.isArray(d.hashes) || !d.hashes.length || !d.salt) return;
+      guestHashes = {
+        iterations: d.iterations || 100000,
+        salt: d.salt,
+        hashes: new Set(d.hashes.map((h) => String(h).toLowerCase())),
+      };
+    } catch (e) {
+      // 파일이 없으면 config.js 의 평문 명단으로 넘어간다
+    }
+  }
+
+  /**
+   *  이름을 PBKDF2-SHA256 으로 해시한다.
+   *  crypto.subtle 은 https 또는 localhost 에서만 동작한다.
+   */
+  async function hashName(normalized, salt, iterations) {
+    const enc = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw', enc.encode(normalized), 'PBKDF2', false, ['deriveBits']
+    );
+    const bits = await crypto.subtle.deriveBits(
+      { name: 'PBKDF2', salt: enc.encode(salt), iterations, hash: 'SHA-256' },
+      key, 256
+    );
+    return [...new Uint8Array(bits)]
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  /**
+   *  입장 가능하면 화면에 표시할 이름을, 아니면 null 을 돌려준다.
+   *
+   *  두 명단을 모두 본다 (둘 중 하나만 맞아도 입장):
+   *    1. config.js 의 guestGate.guests  — 적으면 바로 적용. 소스에 보임
+   *    2. guests.json 의 해시 목록       — update-guests.ps1 이 만듦. 안 보임
+   */
+  async function findGuest(input) {
     const key = normalizeName(input);
     if (!key) return null;
+
+    // 1) config.js 평문 목록 — 스크립트를 돌리지 않아도 즉시 반영된다
     const list = (C.guestGate && C.guestGate.guests) || [];
-    return list.find((g) => normalizeName(g) === key) || null;
+    const plain = list.find((g) => normalizeName(g) === key);
+    if (plain) return plain;
+
+    // 2) 해시 목록
+    if (guestHashes) {
+      try {
+        const h = await hashName(key, guestHashes.salt, guestHashes.iterations);
+        // 해시는 되돌릴 수 없으므로 입력하신 표기를 그대로 보여준다
+        // (연속된 공백만 하나로 줄인다)
+        if (guestHashes.hashes.has(h)) return String(input).trim().replace(/\s+/g, ' ');
+      } catch (e) {
+        // crypto.subtle 을 쓸 수 없는 환경 (file:// 로 열었을 때 등)
+      }
+    }
+
+    return null;
   }
 
   function unlock(guestName) {
@@ -524,7 +584,7 @@
     }
   }
 
-  function initGate() {
+  async function initGate() {
     const gate = $('#gate');
 
     // 게이트를 끈 경우: 바로 본문 공개
@@ -545,7 +605,7 @@
     if (g.remember) {
       let saved = null;
       try { saved = localStorage.getItem(GATE_KEY); } catch (e) { /* 시크릿 모드 등 */ }
-      const matched = saved && findGuest(saved);
+      const matched = saved ? await findGuest(saved) : null;
       if (matched) {
         gate.remove();
         unlock(matched);
@@ -578,9 +638,29 @@
       setTimeout(() => gate.remove(), 450);
     };
 
-    $('#gateForm').addEventListener('submit', (e) => {
+    // 해시 대조에 0.2초쯤 걸리므로 그동안 버튼을 잠가 중복 제출을 막는다
+    const submitBtn = $('#gateSubmit');
+    const busyText = '확인 중…';
+    let busy = false;
+
+    $('#gateForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const matched = findGuest(input.value);
+      if (busy) return;
+
+      const typed = input.value;
+      busy = true;
+      submitBtn.disabled = true;
+      submitBtn.textContent = busyText;
+
+      let matched = null;
+      try {
+        matched = await findGuest(typed);
+      } finally {
+        busy = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = g.buttonText || '입장하기';
+      }
+
       if (matched) pass(matched);
       else fail();
     });
@@ -615,8 +695,9 @@
    *  실행
    * ────────────────────────────────────────────────────────────── */
   (async function start() {
-    // 사진 목록을 먼저 확보한다. 실패해도 config.js 값으로 계속 진행된다.
-    await loadPhotoManifest();
+    // 사진 목록과 하객 해시를 먼저 확보한다.
+    // 둘 다 실패해도 config.js 값으로 계속 진행된다.
+    await Promise.all([loadPhotoManifest(), loadGuestHashes()]);
 
     renderMeta();
     renderCover();
