@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f7f3ee" />
+
+  <title>모바일 청첩장</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="" id="ogTitle" />
+  <meta property="og:description" content="" id="ogDesc" />
+  <meta property="og:image" content="assets/img/cover.svg" id="ogImage" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Cormorant+Garamond:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<!-- ===== 배경음악 토글 ===== -->
+<button class="bgm-toggle" id="bgmToggle" hidden aria-label="배경음악 재생/정지">♪</button>
+
+<main class="paper">
+
+  <!-- ===== 1. 표지 ===== -->
+  <section class="cover reveal">
+    <p class="cover__label">WE ARE GETTING MARRIED</p>
+    <div class="cover__photo">
+      <img id="coverImage" alt="웨딩 사진" />
+    </div>
+    <h1 class="cover__names">
+      <span data-bind="couple.groom.name"></span>
+      <span class="cover__amp">&amp;</span>
+      <span data-bind="couple.bride.name"></span>
+    </h1>
+    <p class="cover__date" id="coverDate"></p>
+    <p class="cover__place" id="coverPlace"></p>
+    <div class="scroll-cue" aria-hidden="true"><span></span></div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ===== 2. 인사말 ===== -->
+  <section class="section greeting reveal">
+    <p class="section__eyebrow">INVITATION</p>
+    <h2 class="section__title" data-bind="greeting.title"></h2>
+    <p class="greeting__body" id="greetingBody"></p>
+
+    <div class="parents" id="parents"></div>
+
+    <div class="contact-buttons">
+      <button class="btn btn--line" data-sheet="groom">신랑측에 연락하기</button>
+      <button class="btn btn--line" data-sheet="bride">신부측에 연락하기</button>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ===== 3. 예식 일시 · 달력 ===== -->
+  <section class="section calendar-section reveal" id="calendarSection">
+    <p class="section__eyebrow">SAVE THE DATE</p>
+    <h2 class="section__title" id="calendarTitle"></h2>
+    <p class="section__sub" id="calendarSub"></p>
+
+    <div class="calendar" id="calendar"></div>
+    <p class="dday" id="dday"></p>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ===== 4. 갤러리 ===== -->
+  <section class="section gallery-section reveal" id="gallerySection">
+    <p class="section__eyebrow">GALLERY</p>
+    <h2 class="section__title">사진첩</h2>
+    <div class="gallery" id="gallery"></div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ===== 5. 오시는 길 ===== -->
+  <section class="section location reveal">
+    <p class="section__eyebrow">LOCATION</p>
+    <h2 class="section__title" id="venueName"></h2>
+    <p class="section__sub" id="venueHall"></p>
+
+    <p class="location__addr" id="venueAddress"></p>
+    <p class="location__tel" id="venueTel"></p>
+
+    <div class="map-buttons">
+      <a class="btn btn--map" id="mapNaver" target="_blank" rel="noopener">네이버 지도</a>
+      <a class="btn btn--map" id="mapKakao" target="_blank" rel="noopener">카카오맵</a>
+      <button class="btn btn--map" id="copyAddress">주소 복사</button>
+    </div>
+
+    <ul class="transport" id="transport"></ul>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ===== 6. 마음 전하실 곳 ===== -->
+  <section class="section accounts-section reveal" id="accountsSection">
+    <p class="section__eyebrow">ACCOUNT</p>
+    <h2 class="section__title">마음 전하실 곳</h2>
+    <p class="section__sub">참석이 어려우신 분들을 위해<br />계좌번호를 안내드립니다.</p>
+    <div class="accordions" id="accounts"></div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- ===== 7. 방명록 ===== -->
+  <section class="section guestbook-section reveal" id="guestbookSection">
+    <p class="section__eyebrow">GUESTBOOK</p>
+    <h2 class="section__title">축하의 한마디</h2>
+
+    <form class="guestbook__form" id="guestbookForm">
+      <input type="text" id="gbName" placeholder="이름" maxlength="12" required />
+      <textarea id="gbMessage" placeholder="축하 메시지를 남겨주세요" maxlength="200" rows="3" required></textarea>
+      <button type="submit" class="btn btn--solid">남기기</button>
+    </form>
+
+    <ul class="guestbook__list" id="guestbookList"></ul>
+    <p class="guestbook__note">※ 데모 버전입니다. 메시지는 이 기기에만 저장됩니다.</p>
+  </section>
+
+  <!-- ===== 8. 마무리 ===== -->
+  <footer class="footer reveal">
+    <img class="footer__photo" id="footerImage" alt="" />
+    <p class="footer__msg">소중한 걸음으로 축복해 주세요</p>
+    <p class="footer__names" id="footerNames"></p>
+    <div class="share-buttons">
+      <button class="btn btn--line" id="shareLink">청첩장 링크 복사</button>
+      <button class="btn btn--line" id="shareNative">공유하기</button>
+    </div>
+    <p class="footer__credit">Mobile Wedding Invitation</p>
+  </footer>
+
+</main>
+
+<!-- ===== 연락처 바텀시트 ===== -->
+<div class="sheet-backdrop" id="sheetBackdrop" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet__handle"></div>
+    <h3 class="sheet__title" id="sheetTitle"></h3>
+    <ul class="sheet__list" id="sheetList"></ul>
+    <button class="btn btn--solid" id="sheetClose">닫기</button>
+  </div>
+</div>
+
+<!-- ===== 사진 라이트박스 ===== -->
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lightbox__close" id="lbClose" aria-label="닫기">✕</button>
+  <button class="lightbox__nav lightbox__nav--prev" id="lbPrev" aria-label="이전 사진">‹</button>
+  <img id="lbImage" alt="" />
+  <button class="lightbox__nav lightbox__nav--next" id="lbNext" aria-label="다음 사진">›</button>
+  <p class="lightbox__count" id="lbCount"></p>
+</div>
+
+<!-- ===== 토스트 ===== -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<audio id="bgm" loop preload="none"></audio>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
