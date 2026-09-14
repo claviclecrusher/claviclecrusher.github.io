@@ -22,6 +22,24 @@
 </head>
 <body>
 
+<!-- ===== 이름 확인 게이트 ===== -->
+<div class="gate" id="gate" hidden>
+  <div class="gate__inner">
+    <p class="gate__eyebrow" id="gateEyebrow"></p>
+    <h1 class="gate__title" id="gateTitle"></h1>
+    <p class="gate__desc" id="gateDesc"></p>
+
+    <form class="gate__form" id="gateForm" autocomplete="off" novalidate>
+      <input type="text" id="gateInput" maxlength="20" required
+             autocomplete="name" enterkeyhint="go"
+             aria-describedby="gateError" />
+      <button type="submit" class="btn btn--solid" id="gateSubmit"></button>
+    </form>
+
+    <p class="gate__error" id="gateError" role="alert"></p>
+  </div>
+</div>
+
 <!-- ===== 배경음악 토글 ===== -->
 <button class="bgm-toggle" id="bgmToggle" hidden aria-label="배경음악 재생/정지">♪</button>
 
@@ -29,6 +47,7 @@
 
   <!-- ===== 1. 표지 ===== -->
   <section class="cover reveal">
+    <p class="cover__guest" id="coverGuest" hidden></p>
     <p class="cover__label">WE ARE GETTING MARRIED</p>
     <div class="cover__photo">
       <img id="coverImage" alt="웨딩 사진" />
@@ -136,6 +155,7 @@
       <button class="btn btn--line" id="shareLink">청첩장 링크 복사</button>
       <button class="btn btn--line" id="shareNative">공유하기</button>
     </div>
+    <button class="footer__reset" id="gateReset" hidden>다른 이름으로 보기</button>
     <p class="footer__credit">Mobile Wedding Invitation</p>
   </footer>
 

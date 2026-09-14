@@ -461,7 +461,113 @@
   }
 
   /* ──────────────────────────────────────────────────────────────
-   *  11. 스크롤 등장 애니메이션
+   *  11. 이름 확인 게이트
+   *
+   *  ⚠ 보안 장치가 아닙니다. 명단이 이 파일과 함께 브라우저로
+   *     내려가므로 소스를 보면 전부 드러납니다. "문패" 수준의 안내용.
+   * ────────────────────────────────────────────────────────────── */
+  const GATE_KEY = 'wedding-guest-name';
+
+  /** 띄어쓰기·대소문자 차이를 무시하기 위한 정규화 */
+  const normalizeName = (s) => String(s || '').replace(/\s+/g, '').toLowerCase();
+
+  /** 입력한 이름이 명단에 있으면 명단에 적힌 원래 표기를 돌려준다 */
+  function findGuest(input) {
+    const key = normalizeName(input);
+    if (!key) return null;
+    const list = (C.guestGate && C.guestGate.guests) || [];
+    return list.find((g) => normalizeName(g) === key) || null;
+  }
+
+  function unlock(guestName) {
+    document.body.classList.add('is-unlocked');
+
+    // 표지에 "홍길동님께" 표시
+    if (guestName && C.guestGate) {
+      const el = $('#coverGuest');
+      el.innerHTML = `<b></b>${C.guestGate.greetingSuffix || ''}`;
+      el.querySelector('b').textContent = guestName;
+      el.hidden = false;
+    }
+
+    // 기억해 둔 이름이 있으면 지울 수 있는 버튼을 footer 에 노출
+    if (C.options.showGate && C.guestGate && C.guestGate.remember) {
+      const reset = $('#gateReset');
+      reset.hidden = false;
+      reset.addEventListener('click', () => {
+        try { localStorage.removeItem(GATE_KEY); } catch (e) { /* 저장 불가 환경 */ }
+        location.reload();
+      });
+    }
+  }
+
+  function initGate() {
+    const gate = $('#gate');
+
+    // 게이트를 끈 경우: 바로 본문 공개
+    if (!C.options.showGate || !C.guestGate) {
+      gate.remove();
+      unlock(null);
+      return;
+    }
+
+    const g = C.guestGate;
+    $('#gateEyebrow').textContent = g.eyebrow || '';
+    $('#gateTitle').textContent   = g.title || '';
+    $('#gateDesc').textContent    = g.description || '';
+    $('#gateSubmit').textContent  = g.buttonText || '입장하기';
+    $('#gateInput').placeholder   = g.placeholder || '';
+
+    // 지난 방문에서 기억해 둔 이름이 아직 명단에 있으면 그대로 통과
+    if (g.remember) {
+      let saved = null;
+      try { saved = localStorage.getItem(GATE_KEY); } catch (e) { /* 시크릿 모드 등 */ }
+      const matched = saved && findGuest(saved);
+      if (matched) {
+        gate.remove();
+        unlock(matched);
+        return;
+      }
+    }
+
+    gate.hidden = false;
+    const input = $('#gateInput');
+    const error = $('#gateError');
+
+    // 모바일 키보드가 바로 올라오면 거슬리므로 focus 는 주되 스크롤은 막는다
+    input.focus({ preventScroll: true });
+
+    const fail = () => {
+      error.textContent = g.errorText || '명단에서 성함을 찾지 못했습니다.';
+      error.classList.add('is-on');
+      gate.classList.add('is-shaking');
+      setTimeout(() => gate.classList.remove('is-shaking'), 450);
+      input.select();
+    };
+
+    const pass = (matched) => {
+      if (g.remember) {
+        try { localStorage.setItem(GATE_KEY, matched); } catch (e) { /* 저장 불가 환경 */ }
+      }
+      unlock(matched);
+      input.blur();
+      gate.classList.add('is-leaving');
+      setTimeout(() => gate.remove(), 450);
+    };
+
+    $('#gateForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const matched = findGuest(input.value);
+      if (matched) pass(matched);
+      else fail();
+    });
+
+    // 다시 입력하기 시작하면 오류 메시지를 지운다
+    input.addEventListener('input', () => error.classList.remove('is-on'));
+  }
+
+  /* ──────────────────────────────────────────────────────────────
+   *  12. 스크롤 등장 애니메이션
    * ────────────────────────────────────────────────────────────── */
   function initReveal() {
     const targets = $$('.reveal');
@@ -496,5 +602,6 @@
   initGuestbook();
   initShare();
   initBgm();
+  initGate();
   initReveal();
 })();
